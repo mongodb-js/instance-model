@@ -84,6 +84,22 @@ describe('mongodb-instance-model#fetch', function() {
     });
   });
 
+  it('should get instance details for john doe', function(done) {
+    var connection = Connection.from('john:doe@localhost:30000/admin?authMechanism=MONGODB-CR');
+    connect(connection, function(err, db) {
+      if (err) {
+        return done(err);
+      }
+      fetch(db, function(_err, res) {
+        if (_err) {
+          return done(_err);
+        }
+        debug('instance details', JSON.stringify(res, null, 2));
+        done();
+      });
+    });
+  });
+
   if (fixtures.length > 0) {
     describe('functional #slow', function() {
       _.map(_.groupBy(fixtures, 'authentication'), function(models, authentication) {
@@ -154,7 +170,10 @@ describe('mongodb-instance-model#fetch', function() {
                 this.slow(5000);
                 this.timeout(10000);
                 assert(db, 'requires successful connection');
-                fetch(db, done);
+                fetch(db, function(err, res) {
+                  debug('got instance details', res);
+                  done(err, res);
+                });
               });
 
               after(function() {
