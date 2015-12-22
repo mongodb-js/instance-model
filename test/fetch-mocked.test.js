@@ -45,6 +45,9 @@ describe('unit tests on fetch functions', function() {
         };
       };
       db.db = function(databaseName) {
+        if (databaseName === 'admin') {
+          return db.admin();
+        }
         return {
           databaseName: databaseName,
           listCollections: function() {
