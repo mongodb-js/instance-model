@@ -25,10 +25,6 @@ describe('unit tests on fetch functions', function() {
       var db = {};
       db.admin = function() {
         return {
-          // buildInfo is a separate function on the admin object
-          buildInfo: function(callback) {
-            return callback(err, res);
-          },
           // all other commands return the global err/res results
           command: function(command, options, callback) {
             return callback(err, res);
