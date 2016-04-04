@@ -5,7 +5,7 @@ var fixtures = require('./fixtures');
 // var debug = require('debug')('mongodb-instance-model:test:fetch-mocked');
 
 
-describe('unit tests on fetch functions', function() {
+describe('fetch-mocked', function() {
   var makeMockDB;
 
   before(function() {
