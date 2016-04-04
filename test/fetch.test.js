@@ -12,11 +12,12 @@ var fixtures = require('mongodb-connection-fixture').MATRIX.map(function(model) 
 describe('mongodb-instance-model#fetch', function() {
   describe('local', function() {
     var db;
-    before(require('mongodb-runner/mocha/before')());
-    after(function() {
+    before(require('mongodb-runner/mocha/before'));
+    after(function(done) {
       if (db) {
         db.close();
       }
+      require('mongodb-runner/mocha/after')({}, done);
     });
     it('should connect to `localhost:27017`', function(done) {
       var model = Connection.from('mongodb://localhost:27017');
