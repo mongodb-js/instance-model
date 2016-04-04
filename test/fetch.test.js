@@ -16,11 +16,10 @@ describe('mongodb-instance-model#fetch', function() {
     before(function(done) {
       runner.start({}, done);
     });
-    after(function(done) {
+    after(function() {
       if (db) {
         db.close();
       }
-      runner.stop({}, done);
     });
     it('should connect to `localhost:27017`', function(done) {
       var model = Connection.from('mongodb://localhost:27017');
