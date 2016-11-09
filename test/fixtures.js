@@ -1,6 +1,6 @@
 /* eslint indent: 0, quotes: 0, key-spacing: 0 */
 
-var HOST_INFO = {
+const HOST_INFO = {
   "system" : {
     "currentTime" : new Date("2015-12-03T00:51:06.763Z"),
     "hostname" : "Groot.local",
@@ -31,7 +31,7 @@ var HOST_INFO = {
 };
 
 
-var USER_INFO_JOHN = {
+const USER_INFO_JOHN = {
   "_id" : "admin.john",
   "user" : "john",
   "db" : "admin",
@@ -369,7 +369,7 @@ var USER_INFO_JOHN = {
   ]
 };
 
-var USER_INFO_LISTDB_ONLY = {
+const USER_INFO_LISTDB_ONLY = {
   "_id" : "admin.listy",
   "user" : "listy",
   "db" : "admin",
@@ -397,7 +397,7 @@ var USER_INFO_LISTDB_ONLY = {
   ]
 };
 
-var BUILD_INFO_OLD = {
+const BUILD_INFO_OLD = {
   "version" : "2.6.11",
   "gitVersion" : "d00c1735675c457f75a12d530bee85421f0c5548 modules: enterprise",
   "OpenSSLVersion" : "OpenSSL 1.0.1f 6 Jan 2014",
@@ -418,7 +418,7 @@ var BUILD_INFO_OLD = {
   "ok" : 1
 };
 
-var BUILD_INFO_3_2 = {
+const BUILD_INFO_3_2 = {
   "version" : "3.2.0-rc2",
   "gitVersion" : "8a3acb42742182c5e314636041c2df368232bbc5",
   "modules" : [

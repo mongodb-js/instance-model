@@ -1,18 +1,19 @@
-var _ = require('lodash');
-var assert = require('assert');
-var Connection = require('mongodb-connection-model');
-var connect = Connection.connect;
-var format = require('util').format;
-var fetch = require('../').fetch;
-var runner = require('mongodb-runner');
-var debug = require('debug')('mongodb-instance-model:test:fetch');
+const _ = require('lodash');
+const assert = require('assert');
+const Connection = require('mongodb-connection-model');
+const connect = Connection.connect;
+const format = require('util').format;
+const fetch = require('../').fetch;
+const runner = require('mongodb-runner');
+const debug = require('debug')('mongodb-instance-model:test:fetch');
 
-var fixtures = require('mongodb-connection-fixture').MATRIX.map(function(model) {
+const fixtures = require('mongodb-connection-fixture').MATRIX.map((model) => {
   return new Connection(model);
 });
-describe('mongodb-instance-model#fetch', function() {
-  describe('local', function() {
-    var db;
+
+describe('mongodb-instance-model#fetch', () => {
+  describe('local', () => {
+    let db;
     before(function(done) {
       this.timeout(20000);
       runner.start({}, done);
@@ -22,8 +23,8 @@ describe('mongodb-instance-model#fetch', function() {
         db.close();
       }
     });
-    it('should connect to `localhost:27017`', function(done) {
-      var model = Connection.from('mongodb://localhost:27017');
+    it('should connect to `localhost:27017`', (done) => {
+      const model = Connection.from('mongodb://localhost:27017');
       connect(model, function(err, _db) {
         if (err) {
           return done(err);
@@ -32,7 +33,7 @@ describe('mongodb-instance-model#fetch', function() {
         done();
       });
     });
-    it('should get instance details', function(done) {
+    it('should get instance details', (done) => {
       assert(db);
       fetch(db, function(err, res) {
         if (err) {
@@ -42,7 +43,7 @@ describe('mongodb-instance-model#fetch', function() {
         done();
       });
     });
-    it('should not close the db after getting instance details', function(done) {
+    it('should not close the db after getting instance details', (done) => {
       assert(db);
       fetch(db, function(err) {
         if (err) {
@@ -62,8 +63,8 @@ describe('mongodb-instance-model#fetch', function() {
    * @todo (imlucas) After mongodb-tools rewrite, http://npm.im/mongodb-runner
    * will be able to properly spin up deployments w authentication.
    */
-  it.skip('should get instance details for john doe', function(done) {
-    var connection = Connection.from('john:doe@localhost:30000/admin?authMechanism=MONGODB-CR');
+  it.skip('should get instance details for john doe', (done) => {
+    const connection = Connection.from('john:doe@localhost:30000/admin?authMechanism=MONGODB-CR');
     connect(connection, function(err, db) {
       if (err) {
         return done(err);
@@ -79,13 +80,13 @@ describe('mongodb-instance-model#fetch', function() {
   });
 
   if (fixtures.length > 0) {
-    describe('functional #slow', function() {
+    describe('functional #slow', () => {
       _.map(_.groupBy(fixtures, 'authentication'), function(models, authentication) {
-        describe(format('Using authentication `%s`', authentication), function() {
+        describe(format('Using authentication `%s`', authentication), () => {
           _.each(models, function(model) {
-            describe(model.name, function() {
-              var db;
-              it('should connect', function(done) {
+            describe(model.name, () => {
+              let db;
+              it('should connect', (done) => {
                 if (process.env.dry) {
                   this.skip();
                   return;
@@ -101,7 +102,7 @@ describe('mongodb-instance-model#fetch', function() {
                   done();
                 });
               });
-              it('should get instance details', function(done) {
+              it('should get instance details', (done) => {
                 if (process.env.dry) {
                   this.skip();
                   return;

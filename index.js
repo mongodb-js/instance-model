@@ -1,8 +1,8 @@
-var Model = require('./lib/model');
-var fetch = require('./lib/fetch');
-var _ = require('lodash');
-var URL = require('mongodb-url');
-var debug = require('debug')('mongodb-instance-model');
+const Model = require('./lib/model');
+const fetch = require('./lib/fetch');
+const _ = require('lodash');
+const URL = require('mongodb-url');
+const debug = require('debug')('mongodb-instance-model');
 
 module.exports = Model;
 module.exports.fetch = fetch;
@@ -12,8 +12,8 @@ module.exports.get = function(db, done) {
       return done(err);
     }
 
-    var port;
-    var hostname;
+    let port;
+    let hostname;
 
     if (_.has(db, 's.options.url')) {
       debug('parsing port and hostname from driver url option `%s`',

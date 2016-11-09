@@ -1,14 +1,11 @@
-var assert = require('assert');
-var fetch = require('../').fetch;
-var fixtures = require('./fixtures');
+const assert = require('assert');
+const fetch = require('../').fetch;
+const fixtures = require('./fixtures');
 
-// var debug = require('debug')('mongodb-instance-model:test:fetch-mocked');
+describe('fetch-mocked', () => {
+  let makeMockDB;
 
-
-describe('fetch-mocked', function() {
-  var makeMockDB;
-
-  before(function() {
+  before(() => {
     /**
      * Create a mock db object that will return an error or a result on
      * any of its methods. Pass in either and error or a result, but not
@@ -21,36 +18,30 @@ describe('fetch-mocked', function() {
      * @return {Object}            a db object that behaves like the mongodb
      *                             driver
      */
-    makeMockDB = function(err, res) {
-      var db = {};
-      db.admin = function() {
+    makeMockDB = (err, res) => {
+      const db = {};
+      db.admin = () => {
         return {
           // all other commands return the global err/res results
-          command: function(command, options, callback) {
-            return callback(err, res);
-          },
+          command: (command, options, callback) => { callback(err, res); },
           databaseName: 'admin',
           // listCollections is a separate function on the admin object
-          listCollections: function() {
+          listCollections: () => {
             return {
-              toArray: function(callback) {
-                return callback(err, res);
-              }
+              toArray: (callback) => { callback(err, res); }
             };
           }
         };
       };
-      db.db = function(databaseName) {
+      db.db = (databaseName) => {
         if (databaseName === 'admin') {
           return db.admin();
         }
         return {
           databaseName: databaseName,
-          listCollections: function() {
+          listCollections: () => {
             return {
-              toArray: function(callback) {
-                return callback(err, res);
-              }
+              toArray: (callback) => { callback(err, res); }
             };
           }
         };
@@ -59,35 +50,35 @@ describe('fetch-mocked', function() {
     };
   });
 
-  describe('getBuildInfo', function() {
-    it('should pass on any error that buildInfo returns', function(done) {
+  describe('getBuildInfo', () => {
+    it('should pass on any error that buildInfo returns', (done) => {
       // instead of the real db handle, pass in the mocked one
-      var results = {
+      const results = {
         // make a db that always returns error for db.admin().buildInfo()
         db: makeMockDB(new Error('some strange error'), null)
       };
-      fetch.getBuildInfo(function(err, res) {
+      fetch.getBuildInfo((err, res) => {
         assert.equal(res, null);
         assert.equal(err.command, 'buildInfo');
         assert.equal(err.message, 'some strange error');
         done();
       }, results);
     });
-    it('should detect enterprise module correctly for 2.6 and 3.0', function(done) {
-      var results = {
+    it('should detect enterprise module correctly for 2.6 and 3.0', (done) => {
+      const results = {
         db: makeMockDB(null, fixtures.BUILD_INFO_OLD)
       };
-      fetch.getBuildInfo(function(err, res) {
+      fetch.getBuildInfo((err, res) => {
         assert.equal(err, null);
         assert.equal(res.enterprise_module, true);
         done();
       }, results);
     });
-    it('should detect enterprise module correctly for 3.2 +', function(done) {
-      var results = {
+    it('should detect enterprise module correctly for 3.2 +', (done) => {
+      const results = {
         db: makeMockDB(null, fixtures.BUILD_INFO_3_2)
       };
-      fetch.getBuildInfo(function(err, res) {
+      fetch.getBuildInfo((err, res) => {
         assert.equal(err, null);
         assert.equal(res.enterprise_module, true);
         done();
@@ -95,25 +86,25 @@ describe('fetch-mocked', function() {
     });
   });
 
-  describe('getHostInfo', function() {
-    it('should ignore auth errors gracefully', function(done) {
+  describe('getHostInfo', () => {
+    it('should ignore auth errors gracefully', (done) => {
       // instead of the real db handle, pass in the mocked one
-      var results = {
+      const results = {
         db: makeMockDB(new Error('not authorized on fooBarDatabase to execute command '
           + '{listCollections: true, filter: {}, cursor: {}'), null)
       };
-      fetch.getHostInfo(function(err, res) {
+      fetch.getHostInfo((err, res) => {
         assert.equal(err, null);
         assert.deepEqual(res, []);
         done();
       }, results);
     });
-    it('should pass on other errors from the hostInfo command', function(done) {
+    it('should pass on other errors from the hostInfo command', (done) => {
       // instead of the real db handle, pass in the mocked one
-      var results = {
+      const results = {
         db: makeMockDB(new Error('some other error from hostInfo'), null)
       };
-      fetch.getHostInfo(function(err, res) {
+      fetch.getHostInfo((err, res) => {
         assert.ok(err);
         assert.equal(err.command, 'hostInfo');
         assert.deepEqual(res, null);
@@ -122,29 +113,29 @@ describe('fetch-mocked', function() {
     });
   });
 
-  describe('listDatabases', function() {
-    var results = {};
+  describe('listDatabases', () => {
+    const results = {};
 
-    beforeEach(function() {
+    beforeEach(() => {
       results.userInfo = fixtures.USER_INFO_JOHN;
     });
 
-    it('should ignore auth errors gracefully', function(done) {
+    it('should ignore auth errors gracefully', (done) => {
       // instead of the real db handle, pass in the mocked one
       results.db = makeMockDB(new Error('not authorized on admin to execute command '
         + '{ listDatabases: 1.0 }'), null);
 
-      fetch.listDatabases(function(err, res) {
+      fetch.listDatabases((err, res) => {
         assert.equal(err, null);
         assert.deepEqual(res, []);
         done();
       }, results);
     });
-    it('should pass on other errors from the listDatabases command', function(done) {
+    it('should pass on other errors from the listDatabases command', (done) => {
       // instead of the real db handle, pass in the mocked one
       results.db = makeMockDB(new Error('some other error from hostInfo'), null);
 
-      fetch.listDatabases(function(err, res) {
+      fetch.listDatabases((err, res) => {
         assert.ok(err);
         assert.equal(err.command, 'listDatabases');
         assert.deepEqual(res, null);
@@ -153,13 +144,13 @@ describe('fetch-mocked', function() {
     });
   });
 
-  describe('getAllowedDatabases', function() {
-    var results = {};
+  describe('getAllowedDatabases', () => {
+    const results = {};
 
-    it('should return all databases for which the user can list collections', function(done) {
+    it('should return all databases for which the user can list collections', (done) => {
       results.userInfo = fixtures.USER_INFO_JOHN;
 
-      fetch.getAllowedDatabases(function(err, res) {
+      fetch.getAllowedDatabases((err, res) => {
         assert.equal(err, null);
         res.sort();
         assert.deepEqual(res, ['accounts', 'products', 'reporting', 'sales']);
@@ -167,10 +158,10 @@ describe('fetch-mocked', function() {
       }, results);
     });
 
-    it('should return empty list for users with no list collections', function(done) {
+    it('should return empty list for users with no list collections', (done) => {
       results.userInfo = fixtures.USER_INFO_LISTDB_ONLY;
 
-      fetch.getAllowedDatabases(function(err, res) {
+      fetch.getAllowedDatabases((err, res) => {
         assert.equal(err, null);
         assert.deepEqual(res, []);
         done();
@@ -178,15 +169,15 @@ describe('fetch-mocked', function() {
     });
   });
 
-  describe('getAllowedCollections', function() {
-    var results = {};
+  describe('getAllowedCollections', () => {
+    const results = {};
 
-    it('should return all collections the user info says it can access', function(done) {
+    it('should return all collections the user info says it can access', (done) => {
       results.userInfo = fixtures.USER_INFO_JOHN;
 
-      fetch.getAllowedCollections(function(err, res) {
+      fetch.getAllowedCollections((err, res) => {
         assert.equal(err, null);
-        var expected = [
+        const expected = [
           {
             '_id': 'tenants.mongodb',
             'database': 'tenants',
@@ -199,10 +190,10 @@ describe('fetch-mocked', function() {
       }, results);
     });
 
-    it('should return empty list for users with no collections', function(done) {
+    it('should return empty list for users with no collections', (done) => {
       results.userInfo = fixtures.USER_INFO_LISTDB_ONLY;
 
-      fetch.getAllowedCollections(function(err, res) {
+      fetch.getAllowedCollections((err, res) => {
         assert.equal(err, null);
         assert.deepEqual(res, []);
         done();
@@ -210,23 +201,23 @@ describe('fetch-mocked', function() {
     });
   });
 
-  describe('getDatabaseCollections', function() {
-    var results = {};
-    it('should ignore auth errors gracefully', function(done) {
+  describe('getDatabaseCollections', () => {
+    const results = {};
+    it('should ignore auth errors gracefully', (done) => {
       results.db = makeMockDB(new Error('not authorized on fooBarDatabase to execute command '
         + '{listCollections: true, filter: {}, cursor: {}'), null);
 
-      fetch.getDatabaseCollections(results.db.admin(), function(err, res) {
+      fetch.getDatabaseCollections(results.db.admin(), (err, res) => {
         assert.equal(err, null);
         assert.deepEqual(res, []);
         done();
       });
     });
 
-    it('should pass on other errors from the listCollections command', function(done) {
+    it('should pass on other errors from the listCollections command', (done) => {
       results.db = makeMockDB(new Error('some other error from list collections'), null);
 
-      fetch.getDatabaseCollections(results.db.admin(), function(err, res) {
+      fetch.getDatabaseCollections(results.db.admin(), (err, res) => {
         assert.ok(err);
         assert.equal(err.command, 'listCollections');
         assert.deepEqual(res, null);
@@ -235,10 +226,10 @@ describe('fetch-mocked', function() {
     });
   });
 
-  describe('listCollections', function() {
-    var results = {};
+  describe('listCollections', () => {
+    const results = {};
 
-    beforeEach(function() {
+    beforeEach(() => {
       results.databases = [
         {
           'name': 'accounts'
@@ -255,7 +246,7 @@ describe('fetch-mocked', function() {
       ];
     });
 
-    it('should lists all collections for each listable db', function(done) {
+    it('should lists all collections for each listable db', (done) => {
       results.userInfo = fixtures.USER_INFO_JOHN;
       results.db = makeMockDB(null, [{
         'name': 'testCol',
@@ -264,10 +255,10 @@ describe('fetch-mocked', function() {
         }
       }]);
 
-      fetch.listCollections(function(err, res) {
+      fetch.listCollections((err, res) => {
         assert.equal(err, null);
         res.sort();
-        var expected = [
+        const expected = [
           {
             '_id': 'accounts.testCol',
             'database': 'accounts',
@@ -299,11 +290,11 @@ describe('fetch-mocked', function() {
       }, results);
     });
 
-    it('should be empty for no privileges', function(done) {
+    it('should be empty for no privileges', (done) => {
       results.userInfo = fixtures.USER_INFO_LISTDB_ONLY;
       results.db = makeMockDB(null, []);
 
-      fetch.listCollections(function(err, res) {
+      fetch.listCollections((err, res) => {
         assert.equal(err, null);
         assert.deepEqual(res, []);
         done();
