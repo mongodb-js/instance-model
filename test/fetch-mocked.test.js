@@ -191,7 +191,7 @@ describe('fetch-mocked', function() {
             '_id': 'tenants.mongodb',
             'database': 'tenants',
             'name': 'mongodb',
-            'readOnly': false
+            'readonly': false
           }
         ];
         assert.deepEqual(res, expected);
@@ -272,25 +272,25 @@ describe('fetch-mocked', function() {
             '_id': 'accounts.testCol',
             'database': 'accounts',
             'name': 'testCol',
-            'readOnly': true
+            'readonly': true
           },
           {
             '_id': 'products.testCol',
             'database': 'products',
             'name': 'testCol',
-            'readOnly': true
+            'readonly': true
           },
           {
             '_id': 'reporting.testCol',
             'database': 'reporting',
             'name': 'testCol',
-            'readOnly': true
+            'readonly': true
           },
           {
             '_id': 'sales.testCol',
             'database': 'sales',
             'name': 'testCol',
-            'readOnly': true
+            'readonly': true
           }
         ];
         expected.sort();
