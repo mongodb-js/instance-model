@@ -15,7 +15,7 @@ var fixtures = require('mongodb-connection-fixture').MATRIX.map(function(
 
 if (process.env.MONGODB_URL) {
   var connectionFromEnvVar = Connection.from(process.env.MONGODB_URL);
-  connectionFromEnvVar.name = 'MONGODB_URL environment variable';
+  connectionFromEnvVar.name = '$MONGODB_URL environment variable';
   fixtures.push(connectionFromEnvVar);
 }
 
@@ -112,6 +112,7 @@ describe('mongodb-instance-model#fetch', function() {
                   this.timeout(20000);
 
                   connect(model, function(err, _db) {
+                    debug('connect result is', err, _db);
                     if (err) {
                       return done(err);
                     }
